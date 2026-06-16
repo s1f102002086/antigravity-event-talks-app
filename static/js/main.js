@@ -322,8 +322,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 badge.textContent = item.category;
                 cardHeader.appendChild(badge);
                 
+                const actionsContainer = document.createElement("div");
+                actionsContainer.className = "card-actions";
+                
+                // Tweet Button
                 const tweetBtn = document.createElement("button");
-                tweetBtn.className = "tweet-action-btn";
+                tweetBtn.className = "card-action-btn btn-tweet";
                 tweetBtn.innerHTML = `
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -331,7 +335,66 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>Tweet</span>
                 `;
                 tweetBtn.addEventListener("click", () => openTweetModal(item));
-                cardHeader.appendChild(tweetBtn);
+                actionsContainer.appendChild(tweetBtn);
+                
+                // Copy Button
+                const copyBtn = document.createElement("button");
+                copyBtn.className = "card-action-btn btn-copy";
+                copyBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copy</span>
+                `;
+                copyBtn.addEventListener("click", () => {
+                    const textToCopy = `BigQuery ${item.category} (${item.date})\n\n${item.text}\n\nRead more: ${item.link}`;
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(() => showToast("Copied update to clipboard!"))
+                        .catch(() => showToast("Failed to copy text."));
+                });
+                actionsContainer.appendChild(copyBtn);
+                
+                // CSV Button
+                const csvBtn = document.createElement("button");
+                csvBtn.className = "card-action-btn btn-csv";
+                csvBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>CSV</span>
+                `;
+                csvBtn.addEventListener("click", () => {
+                    function escapeCSVField(field) {
+                        if (field === null || field === undefined) return '';
+                        const stringField = String(field);
+                        const escaped = stringField.replace(/"/g, '""');
+                        if (escaped.includes(',') || escaped.includes('\n') || escaped.includes('\r') || escaped.includes('"')) {
+                            return `"${escaped}"`;
+                        }
+                        return stringField;
+                    }
+                    const csvHeaders = ["Date", "Category", "Link", "Content"];
+                    const csvRow = [item.date, item.category, item.link, item.text];
+                    const csvContent = csvHeaders.map(escapeCSVField).join(",") + "\n" + csvRow.map(escapeCSVField).join(",") + "\n";
+                    
+                    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    const dateFilename = item.date.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
+                    link.setAttribute("download", `bigquery-update-${dateFilename}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast("Exported to CSV!");
+                });
+                actionsContainer.appendChild(csvBtn);
+                
+                cardHeader.appendChild(actionsContainer);
                 cardEl.appendChild(cardHeader);
                 
                 const contentEl = document.createElement("div");

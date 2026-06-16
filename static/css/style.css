@@ -587,11 +587,15 @@ h1, h2, h3, h4, h5, h6 {
 .badge-deprecated { background-color: var(--color-deprecated-bg); color: var(--color-deprecated); }
 .badge-other { background-color: var(--color-other-bg); color: var(--color-other); }
 
-/* Tweet Button inside card */
-.tweet-action-btn {
-    background: rgba(29, 155, 240, 0.08);
-    border: 1px solid rgba(29, 155, 240, 0.15);
-    color: #1D9BF0;
+/* Card Action Buttons Container */
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Card Action Buttons Base Style */
+.card-action-btn {
     padding: 0.35rem 0.75rem;
     border-radius: 8px;
     font-size: 0.8rem;
@@ -602,16 +606,53 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 0.35rem;
     transition: all var(--transition-fast);
+    border: 1px solid transparent;
+    text-decoration: none;
+    line-height: 1;
 }
 
-.tweet-action-btn:hover {
-    background: rgba(29, 155, 240, 0.15);
-    border-color: #1D9BF0;
+.card-action-btn:hover {
     transform: translateY(-1px);
 }
 
-.tweet-action-btn:active {
+.card-action-btn:active {
     transform: translateY(0);
+}
+
+/* Tweet Button specific styles */
+.card-action-btn.btn-tweet {
+    background: rgba(29, 155, 240, 0.08);
+    border: 1px solid rgba(29, 155, 240, 0.15);
+    color: #1D9BF0;
+}
+
+.card-action-btn.btn-tweet:hover {
+    background: rgba(29, 155, 240, 0.15);
+    border-color: #1D9BF0;
+}
+
+/* Copy Button specific styles */
+.card-action-btn.btn-copy {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.card-action-btn.btn-copy:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10B981;
+}
+
+/* CSV Button specific styles */
+.card-action-btn.btn-csv {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.card-action-btn.btn-csv:hover {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #F59E0B;
 }
 
 /* Update Body Text */
